@@ -139,7 +139,12 @@ export function IncidentVideoDialog({
 
         {playable ? (
           <>
-            <div className="relative aspect-video overflow-hidden rounded-lg border border-border bg-black">
+            <button
+              type="button"
+              onClick={logAccess}
+              aria-label="Play incident footage"
+              className="relative block aspect-video w-full overflow-hidden rounded-lg border border-border bg-black"
+            >
               <img src={STILL} alt="Incident footage frame" className="h-full w-full object-cover opacity-90" />
               <div className="absolute inset-0 grid place-items-center">
                 <span className="grid h-14 w-14 place-items-center rounded-full bg-black/60 text-white">
@@ -147,7 +152,8 @@ export function IncidentVideoDialog({
                 </span>
               </div>
               <MotionStatus />
-            </div>
+            </button>
+
             {unlockedMatch && unlocked ? <AccessTimer expiresAt={unlocked.expiresAt} /> : null}
           </>
         ) : (
