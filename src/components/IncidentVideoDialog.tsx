@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/dialog";
 import { MotionStatus } from "@/components/MotionStatus";
 import { BandwidthIndicator, DataLifecycleInfo } from "@/components/StorageCard";
+import { logArchiveEvent } from "@/lib/archive-audit";
+
 
 const STILL = "https://images.unsplash.com/photo-1557183050-52a5470b3c98?w=1200&q=60";
 
