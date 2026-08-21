@@ -522,7 +522,7 @@ function CctvGrid({ siteName, label }: { siteName: string; label: string }) {
       </p>
       <DataLifecycleInfo />
       {label ? null : null}
-      <IncidentVideoDialog open={videoOpen} onOpenChange={setVideoOpen} siteName={siteName} />
+      <IncidentVideoDialog open={videoOpen} onOpenChange={setVideoOpen} siteName={siteName} siteId={siteId} />
       <Dialog open={!!full} onOpenChange={(o) => !o && setFull(null)}>
         <DialogContent className="sm:max-w-4xl">
           <DialogHeader>
