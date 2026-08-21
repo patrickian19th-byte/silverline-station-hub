@@ -10,10 +10,54 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.5"
+    PostgrestVersion: "14.17"
   }
   public: {
     Tables: {
+      archive_audit_logs: {
+        Row: {
+          action: Database["public"]["Enums"]["archive_audit_action"]
+          actor_email: string | null
+          actor_name: string
+          actor_role: string | null
+          created_at: string
+          footage_date: string
+          id: string
+          note: string | null
+          site_id: string | null
+        }
+        Insert: {
+          action: Database["public"]["Enums"]["archive_audit_action"]
+          actor_email?: string | null
+          actor_name?: string
+          actor_role?: string | null
+          created_at?: string
+          footage_date: string
+          id?: string
+          note?: string | null
+          site_id?: string | null
+        }
+        Update: {
+          action?: Database["public"]["Enums"]["archive_audit_action"]
+          actor_email?: string | null
+          actor_name?: string
+          actor_role?: string | null
+          created_at?: string
+          footage_date?: string
+          id?: string
+          note?: string | null
+          site_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "archive_audit_logs_site_id_fkey"
+            columns: ["site_id"]
+            isOneToOne: false
+            referencedRelation: "sites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       attendance_logs: {
         Row: {
           created_at: string
@@ -137,6 +181,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      archive_audit_action: "requested" | "ready" | "accessed"
       attendance_status: "Present" | "Absent" | "Late" | "Replacement Required"
       incident_type:
         | "Theft"
@@ -276,6 +321,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      archive_audit_action: ["requested", "ready", "accessed"],
       attendance_status: ["Present", "Absent", "Late", "Replacement Required"],
       incident_type: [
         "Theft",

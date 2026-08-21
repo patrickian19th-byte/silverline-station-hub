@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/dialog";
 import { MotionStatus } from "@/components/MotionStatus";
 import { BandwidthIndicator, DataLifecycleInfo } from "@/components/StorageCard";
+import { logArchiveEvent } from "@/lib/archive-audit";
+
 
 const STILL = "https://images.unsplash.com/photo-1557183050-52a5470b3c98?w=1200&q=60";
 
@@ -28,17 +30,21 @@ export function IncidentVideoDialog({
   open,
   onOpenChange,
   siteName,
+  siteId,
   initialDate,
   unlocked,
   onArchiveReady,
+  onAudit,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   siteName?: string;
+  siteId?: string | null;
   initialDate?: Date;
   /** A retrieved archive clip that is temporarily accessible. */
   unlocked?: ReadyArchive | null;
   onArchiveReady?: (ready: ReadyArchive) => void;
+  onAudit?: () => void;
 }) {
   const [date, setDate] = useState<Date | undefined>(initialDate ?? new Date());
   const [pending, setPending] = useState(false);
@@ -54,6 +60,15 @@ export function IncidentVideoDialog({
     !!date && !!unlocked && unlocked.date.toDateString() === date.toDateString();
   const playable = !!date && (isHot(date) || unlockedMatch);
 
+  const audit = async (
+    action: "requested" | "ready" | "accessed",
+    d: Date,
+    note?: string,
+  ) => {
+    await logArchiveEvent({ action, footageDate: d, siteId, note });
+    onAudit?.();
+  };
+
   const requestArchive = () => {
     if (!date) return;
     setPending(true);
@@ -61,14 +76,26 @@ export function IncidentVideoDialog({
       description: "You'll get a notification when ready (usually 5–10 minutes).",
     });
     const target = date;
+    void audit("requested", target, "Archive retrieval requested");
     setTimeout(() => {
       const ready = { date: target, expiresAt: Date.now() + 60 * 60 * 1000 };
       onArchiveReady?.(ready);
+      void audit("ready", target, "Archive footage ready — 1 hour access window");
       toast.success(
         `Your archive footage from ${format(target, "PPP")} is ready. Access for 1 hour.`,
       );
     }, 6000);
   };
+
+  const logAccess = () => {
+    if (!date) return;
+    void audit(
+      "accessed",
+      date,
+      isHot(date) ? "Played recent footage (hot storage)" : "Played retrieved archive footage",
+    );
+  };
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -112,7 +139,12 @@ export function IncidentVideoDialog({
 
         {playable ? (
           <>
-            <div className="relative aspect-video overflow-hidden rounded-lg border border-border bg-black">
+            <button
+              type="button"
+              onClick={logAccess}
+              aria-label="Play incident footage"
+              className="relative block aspect-video w-full overflow-hidden rounded-lg border border-border bg-black"
+            >
               <img src={STILL} alt="Incident footage frame" className="h-full w-full object-cover opacity-90" />
               <div className="absolute inset-0 grid place-items-center">
                 <span className="grid h-14 w-14 place-items-center rounded-full bg-black/60 text-white">
@@ -120,7 +152,8 @@ export function IncidentVideoDialog({
                 </span>
               </div>
               <MotionStatus />
-            </div>
+            </button>
+
             {unlockedMatch && unlocked ? <AccessTimer expiresAt={unlocked.expiresAt} /> : null}
           </>
         ) : (

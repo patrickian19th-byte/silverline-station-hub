@@ -389,7 +389,7 @@ function SiteDetailsPage() {
             </TabsContent>
 
             <TabsContent value="cctv">
-              <CctvGrid siteName={site?.site_name ?? "Site"} label="Live Feed" />
+              <CctvGrid siteName={site?.site_name ?? "Site"} label="Live Feed" siteId={siteId} />
             </TabsContent>
           </Tabs>
         </CardContent>
@@ -468,7 +468,7 @@ function SummaryPill({
   );
 }
 
-function CctvGrid({ siteName, label }: { siteName: string; label: string }) {
+function CctvGrid({ siteName, label, siteId }: { siteName: string; label: string; siteId?: string }) {
   void siteName;
   const cameras = [
     { name: "Front Gate", img: "https://images.unsplash.com/photo-1557183050-52a5470b3c98?w=800&q=60" },
@@ -522,7 +522,7 @@ function CctvGrid({ siteName, label }: { siteName: string; label: string }) {
       </p>
       <DataLifecycleInfo />
       {label ? null : null}
-      <IncidentVideoDialog open={videoOpen} onOpenChange={setVideoOpen} siteName={siteName} />
+      <IncidentVideoDialog open={videoOpen} onOpenChange={setVideoOpen} siteName={siteName} siteId={siteId} />
       <Dialog open={!!full} onOpenChange={(o) => !o && setFull(null)}>
         <DialogContent className="sm:max-w-4xl">
           <DialogHeader>
