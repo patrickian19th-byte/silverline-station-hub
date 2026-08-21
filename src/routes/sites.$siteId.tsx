@@ -468,7 +468,7 @@ function SummaryPill({
   );
 }
 
-function CctvGrid({ siteName, label }: { siteName: string; label: string }) {
+function CctvGrid({ siteName, label, siteId }: { siteName: string; label: string; siteId?: string }) {
   void siteName;
   const cameras = [
     { name: "Front Gate", img: "https://images.unsplash.com/photo-1557183050-52a5470b3c98?w=800&q=60" },
