@@ -389,7 +389,7 @@ function SiteDetailsPage() {
             </TabsContent>
 
             <TabsContent value="cctv">
-              <CctvGrid siteName={site?.site_name ?? "Site"} label="Live Feed" />
+              <CctvGrid siteName={site?.site_name ?? "Site"} label="Live Feed" siteId={siteId} />
             </TabsContent>
           </Tabs>
         </CardContent>
